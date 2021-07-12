@@ -126,3 +126,71 @@ $array_unset[] = 2; // Y se asigna al índice 0 el push.
 echo "<pre>";
 print_r($array_unset);
 echo "</pre>";
+// Operadores
+$x = 5;
+$y = 10;
+echo $x ** $y . "<br />"; // '**' es para potencias: 5 elevado a la 10.
+$y = 0;
+// var_dump(fdiv($x / $y)); // Sólo en PHP8.0, en Laragon usamos PHP7.2+. Permite hacer divisiones entre 0 sin devolver error.
+// var_dump(fmod(10.5 / 2.9)); // El módulo por defecto castea el resultado a int. Si queremos mantener los float, se puede usar fmod() en PHP8.0.
+// Operadores aritméticos combinados: +=, -=, *=, /=, %=, **= 
+// Operadores para cadenas:
+echo "Esto es una" . " unión de cadenas." . "<br />";
+$x = "Hello ";
+echo $x .= "World." . "<br />"; // Con el operador '.=' (Punto igual) añadimos cadenas a la variable.
+// Operadores comparativos: ==, ===, [!=, <>], !==, <, >, <=, >=, <=>, [??, ?:])
+$x = 10;
+$y = 5;
+var_dump($x <=> $y) . "<br />"; // Devuelve 1 si $x > $y, 0 si son iguales y -1 si $x < $y.
+$x = null;
+var_dump($x ?? "x es nulo.") . "<br />"; // Devuelve lo que hayamos asignado como valor por defecto si la variable comparada es 'null'.
+var_dump($y ?? "y es nulo.") . "<br />"; // Devuelve 5.
+/* Operadores bit a bit
+& -> Compara los valores binarios de 2 números y devuelve 1 en las posiciones en las que ambos estén a true o 1.
+| -> Compara los valores binarios de 2 números y devuelve 1 en las posiciones en las que cualquiera de los valores o ambos valores estén a true o 1.
+^ -> Compara los valores binarios de 2 números y devuelve 1 en las posiciones en las que sólo 1 de los dos valores esté a true o 1.
+~ -> Asigna el valor opuesto al actual en cada posición binaria del número al que precede.
+<< -> "Shift left" o mover un bit hacia la izquierda. Aumentan las posiciones de bit.
+6 << 1 -> 110 << 1 -> 1100 (Valor binario) -> 10 (Valor decimal)
+>> -> "Shift right" o mover un bit hacia la derecha. Disminuyen las posiciones de bit.
+6 >> 1 -> 110 >> 1 -> 11 (Valor binario) -> 3 (Valor decimal)
+*/
+// Operaciones con arrays
+$x = ['Alex', 'Paco', 'Roberto'];
+$y = ['Miguel', 'Anselmo', 'Eustaquio'];
+$z = $x + $y; // Con el operador 'suma' se añaden al primer array sólo los valores del segundo array cuyos índices no estén presentes en el primero.
+// Como los índices son los por defecto (0, 1, 2), en este caso no se añaden porque son los mismos en ambos arrays.
+var_dump($z) . "<br />";
+$x = ['primero' => "Alex", "segundo" => "Paco", "tercero" => "Roberto"];
+$y = ["cuarto" => "Miguel", "quinto" => "Anselmo", "sexto" => "Eustaquio"];
+$z = $x + $y; // En este caso como todos los índices son únicos, se añaden todos valores del segundo array al primer array.
+var_dump($z) . "<br />";
+// Cuando los índices son los mismos, sean por defecto o definidos por nosotros, prevalece el primer valor; no se machaca.
+/* Precedencia de operadores
+https://www.php.net/manual/es/language.operators.precedence.php
+Para ir a lo seguro y dotar de mayor legibilidad a nuestro código, usar paréntesis en las operaciones que queramos realizar antes.
+*/
+?>
+<?php
+/* PHP y HTML
+Una forma recomendable de hacer legibles las estructuras condicionales, bucles, etc. junto con los tags HTML sería utilizar el operador ':' tras la instrucción php y antes del cierre.
+*/
+if (5 > 4) : ?>
+    <strong style="color: blue;">Cinco es mayor que cuatro.</strong>
+<?php elseif (5 < 4) : ?>
+    <strong>Esto nunca se va a pintar.</strong>
+<?php else : ?>
+    <strong>La condición por defecto tampoco se va a pintar.</strong>
+<?php endif ?>
+<!-- Debemos cerrar el bloque if si usamos la notación de ':' igual que con endwhile, endfor... -->
+<?php
+echo "<br />";
+$array = [
+    "nombre" => "Alex",
+    "apellidos" => [
+        "Conde", "Gomez"
+    ]
+];
+foreach ($array as $key => $value) { // Referencias reservadas al índice y el valor respectivamente.
+    echo $key . ": " . json_encode($value) . "<br />"; // Con 'json_encode()' podemos pintar un array en formato JSON, similar a usar toString() en Java.
+}
