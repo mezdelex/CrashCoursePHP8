@@ -301,7 +301,7 @@ function doblar(int $number): int {
 if (is_callable('doblar')) // PHP busca la función por nombre y si la encuentra la define como callable. Podemos hacer referencia a la función por nombre.
     $array_de_dobles = array_map('doblar', $array); // La función predeterminada "array_map()" devuelve otro array después de haberle aplicado el Callback que hayamos definido como primer argumento y el propio array como segundo argumento. En PHP las funciones "Callback" son similares a las interfaces funcionales en Java en las que definimos un comportamiento.
 
-$otro_array_de_dobles = array_map(function (int $number): int { // Podemos hacer lo mismo pero usando con una función anónima o Closure del tirón como Callback.
+$otro_array_de_dobles = array_map(function (int $number): int { // Podemos hacer lo mismo pero usando una función anónima o Closure del tirón como Callback.
     return $number * 2;
 }, $array);
 
