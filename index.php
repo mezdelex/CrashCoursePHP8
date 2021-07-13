@@ -1,6 +1,8 @@
 <?php
 // PHP 8 Crash Course https://www.youtube.com/playlist?list=PLr3d3QYzkw2xabQRUpcZ_IBk9W50M9pe-
-declare(strict_types=1); // No permite mutar los tipos. Tipado estricto.
+
+declare(strict_types=1); /* No permite mutar los tipos. Tipado estricto. Si definimos una función en este documento '.php' pero la llamamos desde otro documento añadiendo este con la directiva require (error si no está) o include (warning si no está), si no declaramos también los tipos estrictos en ese documento, podremos llamar a la función con tipos mutados y PHP hará la conversión como si fuera no estricto. Hay que incluir el declare en todos los documentos que queramos que sean estrictos. */
+
 // Las sentencias se separan con ";" como en Java
 // URL para este documento PHP: http://localhost/CursoPHP/index.php
 echo "Esto es una cadena";
@@ -192,5 +194,121 @@ $array = [
     ]
 ];
 foreach ($array as $key => $value) { // Referencias reservadas al índice y el valor respectivamente.
-    echo $key . ": " . json_encode($value) . "<br />"; // Con 'json_encode()' podemos pintar un array en formato JSON, similar a usar toString() en Java.
+    echo $key . ": " . json_encode($value) . "<br />"; // Con 'json_encode()' podemos pintar un array en formato JSON, similar a usar toString() en Java para cuando itere sobre "apellidos".
 }
+// Match (Sólo en PHP8), similar al Switch case con lambdas de Java 11+, aquí me salta el warning porque uso PHP7.2
+// $miValor = 3;
+// match ($miValor) {
+//     1 => echo "Vale 1",
+//     2 => echo "Vale 2",
+//     3 => echo "Vale 3"
+//     default => "Valor no encontrado" // SIEMPRE ha de haber un default, al ser una expresión actúa como un operador ternario y siempre ha de devolver algo
+// };
+// También se podría asignar directamente a una variable al ser expresiones.
+// $retorno = match ($miValor) {
+//     1 => "Vale 1",
+//     2 => "Vale 2",
+//     3, 4 => "Vale 3 o 4" // Se puede asignar el retorno a varios casos simultáneamente.
+//     default => "Valor no encontrado"
+// };
+// echo $retorno;
+
+require "curso.php"; // Sólo se importa este. Importado obligatorio (error).
+require_once "curso.php"; // Si usamos el sufijo "_once", si ya ha sido requerido o incluído antes, no lo vuelve a importar.
+include "curso.php"; // Sólo se importa este. Importado opcional (warning).
+include_once "curso.php"; // Si usamos el sufijo "_once", si ya ha sido requerido o incluído antes, no lo vuelve a importar.
+
+function devolver_cadena(): string { // Con la notación ": <tipo>" seguido de la función, especificamos el tipo estricto que va a devolver dicha función combinado con la directiva "declare(strict_types=1)".
+    return "Esta función va a devolver una cadena.";
+}
+echo devolver_cadena() . "<br />";
+
+// Nullable
+function devolver_entero(): ?int { // Cuando trabajamos con tipos estrictos pero queremos contemplar la opción de que una función pueda devolver null, existe el modificador "?" para hacer nullable dicho retorno y evitar que nos de error. 
+    return null;
+}
+
+/*
+function devolverCualquierTipo(): mixed { // con mixed, le estamos diciendo que la función puede devolver varios tipos de valor; sería una forma de hacer una función no estricta dentro de un documento estricto. SÓLO FUNCIONA CON PHP8+
+    return "Aquí iría cualquier tipo de dato.";
+}
+echo devolverCualquierTipo() . "<br />";
+*/
+
+/*
+function sum(int $x, int|float $y): int|float { // En PHP8+ se pueden especificar varios tipos posibles de datos que se le puedan pasar como argumento a una función. Esta nueva funcionalidad recibe el nombre de "Union Types".
+    return $x + $y;
+}
+*/
+
+// En Java los argumentos siempre se pasan por valor, pero en PHP se pueden pasar por referencia también con el modificador "&" delante.
+$a = 3;
+$b = 5;
+
+function sum_by_value(int $x, int $y): int {
+    return --$x + $y; // Restamos una unidad a "x" antes de sumar los valores y devolver el resultado.
+}
+echo sum_by_value($a, $b) . "<br />"; // Esto devuelve 2 + 5 = 7.
+var_dump($a, $b); // Y el var_dump nos devuelve 3 y 5 que son los valores originales de los argumentos.
+
+function sum_by_reference(int &$x, int $y): int { // Paso por referencia de x
+    return --$x + $y;
+}
+echo sum_by_reference($a, $b) . "<br />"; // Esto devuelve 2 + 5 = 7.
+var_dump($a, $b); // Pero el var_dump nos devuelve 2 y 5 esta vez ya que la variable "x" al haber sido pasada por referencia, ha sido mutada en la función.
+
+// Para pasar varios argumentos a una función, similar al varargs de Java, tenemos el "splat/spread/unpack operator" que son los "..."
+function variadic_function(int ...$values): int {
+    $sum = 0;
+    foreach ($values as $value) {
+        $sum += $value;
+    }
+    return $sum;
+}
+echo variadic_function(4, 5, 6, 12, 41) . "<br />";
+
+// También podemos usar la función predeterminada "array_sum()" para sumar los elementos de un array.
+function another_variadic_function(int ...$values): int {
+    return array_sum($values);
+}
+echo another_variadic_function(4, 5, 1, 2, 3, 54, 12) . "<br />";
+
+// En PHP para usar las variables globales dentro de la función hay que especificarlo dentro de la misma, no están accesibles por defecto.
+$variable_global = 4;
+
+function usando_variable_global(): int {
+    global $variable_global; // Hay que especificar con "global" que estamos haciendo referencia a la variable global.
+    return $variable_global;
+}
+function otra_forma(): int {
+    return $GLOBALS["variable_global"]; // Array de PHP que contiene las variables globales
+}
+echo usando_variable_global() . " y " .  otra_forma() . "<br />";
+
+// A pesar de que en Java esto es algo accesible por defecto, en PHP está considerado mala práctica, y es preferible no usar referencias a variables globales dentro de funciones. En vez de ello, es preferible pasarlas como argumento cuando queramos utilizarlas dentro de una función.
+function forma_recomendable(int $variable): int {
+    return $variable;
+}
+echo forma_recomendable($variable_global) . "<br />";
+
+// Callable, funciones anónimas o Closures y Callbacks
+$array = [1, 2, 3, 4];
+
+function doblar(int $number): int {
+    return $number * 2;
+}
+
+if (is_callable('doblar')) // PHP busca la función por nombre y si la encuentra la define como callable. Podemos hacer referencia a la función por nombre.
+    $array_de_dobles = array_map('doblar', $array); // La función predeterminada "array_map()" devuelve otro array después de haberle aplicado el Callback que hayamos definido como primer argumento y el propio array como segundo argumento. En PHP las funciones "Callback" son similares a las interfaces funcionales en Java en las que definimos un comportamiento.
+
+$otro_array_de_dobles = array_map(function (int $number): int { // Podemos hacer lo mismo pero usando con una función anónima o Closure del tirón como Callback.
+    return $number * 2;
+}, $array);
+
+echo json_encode($array_de_dobles) . "<br />";
+echo json_encode($otro_array_de_dobles) . "<br />";
+
+/* 
+Lambda expression PHP8+
+$array_de_dobles = array_map(fn($number) => $number * 2, $array); // Esto sería con PHP8, pero en PHP7.2 no hay Lambdas... SADGE
+*/
