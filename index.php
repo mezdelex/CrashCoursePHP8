@@ -312,3 +312,60 @@ echo json_encode($otro_array_de_dobles) . "<br />";
 Lambda expression PHP8+
 $array_de_dobles = array_map(fn($number) => $number * 2, $array); // Esto sería con PHP8, pero en PHP7.2 no hay Lambdas... SADGE
 */
+
+// Fecha y Hora
+date_default_timezone_set("Europe/Madrid") . "<br />"; // Fijamos la zona horaria a GMT+1 (Madrid).
+echo date_default_timezone_get() . "<br />"; // Nos devuelve la zona horaria que acabamos de modificar; por defecto es UTC en nuestro php.ini (También se puede cambiar ahí).
+
+echo time() . "<br />"; // Devuelve la fecha actual en segundos desde el 1 de enero de 1970 GMT+0 (Unix Epoch).
+echo time() + 5 * 24 * 60 * 60 . "<br />"; // Devuelve en segundos 5 días después de la fecha actual.
+echo date("d/m/Y g:i a") . "<br />"; // Esto nos devuelve la fecha formateada a 14/07/2021 9:20 am.
+echo date("d/m/Y g:i a", strtotime("second wednesday of July 2021")) . "<br />"; // con strtotime() podemos indicar el día mediante un formato definido de cadena. Esta por ejemplo nos devolvería el 14/07/2021 a las 12:00 am.
+
+// Funciones con arrays
+$array_nombres = ["Alex", "Paco", "Julio", "Alberto"];
+echo json_encode(array_chunk($array_nombres, 2)) . "<br />"; // 'array_chunk()' agrupa el array que le pasemos como primer argumento en grupos de lo que le pasemos como segundo argumento. Hay un tercer argumento opcional que es el preserve_keys para que al agrupar, en caso de que nuestro array original tuviera índices propios, los mantuviese o no.
+$array_edades = [35, 20, 18, 45];
+echo json_encode(array_combine($array_nombres, $array_edades)) . "<br />"; // array_combine() usa el primer array como keys y el segundo como values. Si no coincide la longitud de ambos, salta un error.
+$array_numeros = [1, 2, 3, 4, 5, 6];
+// La función array_filter() filtra el array que le pasemos como primer argumento con el Callback que le pasemos como segundo argumento. Si no le pasamos Callback, nos va a filtrar los valores "falsy" por defecto también. 
+$array_filtrado = array_filter($array_numeros, function (int $number): bool {
+    return $number % 2 === 0;
+});
+echo "<pre>";
+print_r($array_filtrado); // El filtrado también se carga los índices asociados a los valores filtrados.
+print_r(array_values($array_filtrado)); // Si queremos reasignar los índices, podemos usar array_values() con ese array filtrado.
+print_r(array_keys($array_filtrado)); // array_keys() nos devuelve los índices de los valores del array que le pasemos como valor.
+print_r(array_keys($array_filtrado, 4)); // O podemos también especificar los índices asociados a qué valor queremos que nos devuelva.
+$array1 = [1, "cadena" => 2, 3];
+$array2 = [4, 5, 6];
+$array3 = [7, "cadena" => 8, 9];
+print_r(array_merge($array1, $array2, $array3)); // array_merge() combina los valores de los arrays pasados como argumento. Si el índice de alguno de esos valores fuera una CADENA, machacaría con el último valor dicho índice en lugar de reasignarlo. 
+echo "</pre>";
+$optional_initial_value = 10;
+// array_reduce() permite operar de forma iterativa con los valores del propio array que le pasamos, usando el retorno de la anterior operación como argumento para la siguiente. El primer argumento del Callback, que sería el segundo argumento de array_reduce() en sí, es el acumulador, es decir, el valor del retorno de la propia función de Callback que hayamos definido. Y el segundo argumento del Callback es el índice sobre el que iteramos. También podemos especificar opcionalmente el valor inicial como tercer argumento del array_reduce().
+echo array_reduce($array2, function (int $accumulator, int $number): int {
+    return $accumulator + $number;
+}, $optional_initial_value) . "<br />"; // En este caso nos va a devolver la suma de todos los valores del array2 + 10 que es el valor inicial.
+echo array_search(2, $array1) . "<br />"; // Busca el valor especificado en el primer argumento en el array especificado como segundo argumento y devuelve el índice si lo encuentra o null si no lo encuentra. Puede devolver 0 si el índice de ese valor es 0, así que cuidado con la "loose comparisons" '==' y los falsey.
+echo "<pre>";
+print_r(array_diff($array1, $array2, $array3)); // Compara los valores del primer array con los demás y devuelve los que son diferentes.
+print_r(array_diff_assoc($array1, $array2, $array3)); // Lo mismo que el anterior pero teniendo en cuenta además la relación 'índice => valor'.
+print_r(array_diff_key($array1, $array2, $array3)); // Compara las keys en vez de los valores. Como todos los índices están repetidos al ser por defecto y "cadena" también está repetido, devuelve un array vacío.
+echo "</pre>";
+
+$array_desordenado = ["a" => 4, "b" => 1, "z" => 3, "y" => 8, "h" => 5];
+echo "<pre>";
+print_r($array_desordenado);
+asort($array_desordenado); // Orden ascendente por valor.
+print_r($array_desordenado);
+ksort($array_desordenado); // Orden ascendente por índice.
+print_r($array_desordenado);
+usort($array_desordenado, function (int $a, int $b): int { // Orden especificado en el Callback como segundo argumento. En este caso utilizando el operador <=>.
+    return $a <=> $b;
+});
+print_r($array_desordenado); // IMPORTANTE: Al usar usort() se machacan los índices.
+echo "</pre>";
+list($a, $b, $c, $d, $e) = $array_desordenado; // Podemos también asignar los valores de un array directamente a variables con list().
+[$a, $b, $c, $d, $e] = $array_desordenado; // Esto sería lo mismo pero con la forma simplificada.
+echo $a . " " .  $b . " " . $c . " " . $d . " " . $e . "<br />";
