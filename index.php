@@ -369,3 +369,46 @@ echo "</pre>";
 list($a, $b, $c, $d, $e) = $array_desordenado; // Podemos también asignar los valores de un array directamente a variables con list().
 [$a, $b, $c, $d, $e] = $array_desordenado; // Esto sería lo mismo pero con la forma simplificada.
 echo $a . " " .  $b . " " . $c . " " . $d . " " . $e . "<br />";
+
+/*
+INSTALADA LA VERSIÓN PHP 8 A PARTIR DE AQUÍ
+1. Descomprimir el .zip en "C:\laragon\bin\php\"
+2. Elegir en el menú del tray icon de Laragon la versión PHP 8.0.8
+3. Editar en "C:\laragon\etc\apache2\mod_php.conf" la línea "(...) php8_module (...)" por "(...) php_module (...)" quitando el 8
+4. Cerrar y volver a iniciar Laragon, no vale con refrescar el servicio de Apache
+5. Ctrl+Esc -> entorno -> Editar las variables del entorno del sistema -> Variables de entorno
+    Y en las "Variables de usuario", modificar la entrada del Path que sea "C:\laragon\bin\php\<version_antigua>"
+    por "C:\laragon\bin\php\php-8.0.8-Win32-vs16-x64" para que Windows la reconozca de forma global. El terminal integrado de Laragon la usa
+    correctamente sin modificar esta variable de entorno una vez seleccionada desde el tray, pero si queremos trabajar con VS Code, intelephense
+    o Powershell de manera global, tenemos que modificar la versión asociada.
+*/
+
+$array_de_prueba = [1, 2, 3, 4, 5];
+echo "<pre>";
+print_r(array_map(fn (int $number): int => ++$number, $array_de_prueba)); // Ahora las Lambda las reconoce :3
+echo "</pre>";
+
+/*
+**************
+*** CLASES ***
+**************
+*/
+require_once "./Prueba.php"; // Importamos la clase
+
+$prueba = new Prueba();
+var_dump($prueba->getNombre()); // Como en PHP usamos '.' para concatenar, para llamar a las propiedades y métodos de las clases usamos '->'
+/*
+DETALLE IMPORTANTE EXTRAÍDO DEL TUTORIAL APLICABLE DE FORMA GENERAL
+Si en los métodos que retornan void (setters habitualmente o cualquier otro método con el que operemos asignando), en vez de retornar void
+retornásemos la propia instancia del objeto, esto nos permitiría encadenar operaciones en la asignación ya que estaríamos trabajando con la instanciación 
+actualizada constantemente, permitiéndonos el uso de "one liners" para retornar datos habiendo operado con ellos previamente.
+Por ejemplo, suponiendo que nuestro setter para el nombre de la clase Prueba fuera:
+public function setNombre(string $nombre): self|Prueba { // self|Prueba son el mismo tipo de dato, ya que $this es Prueba y self es un modificador que apunta a $this
+    $this->nombre = $nombre;
+    return $this;
+}
+podríamos hacer una cadena en la asignación de una variable tal que:
+$nombre = (new Prueba())->setNombre("Julian")->getNombre();
+De tal forma que la primera asignación instanciaría la clase Prueba con las propiedades del constructor vacío, a su vez asignaríamos "Julián" como nombre y retornaríamos
+la propia instancia para después obtener sólo el nombre de esta y asignarlo así a la variable $nombre. Si retornásemos void en el setter no podríamos hacer esto.
+*/
