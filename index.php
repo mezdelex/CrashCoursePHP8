@@ -389,21 +389,40 @@ print_r(array_map(fn (int $number): int => ++$number, $array_de_prueba)); // Aho
 echo "</pre>";
 
 /*
-**************
-*** CLASES ***
-**************
+***********
+*** OOP ***
+***********
 */
-require_once "./Prueba.php"; // Importamos la clase
+
+/*
+AUTOLOADER carga automáticamente los documentos cuando usemos sus namespaces/variables/constantes/métodos. Por ahora no quiero usarlo, VÍDEO 39.
+*/
+require_once "./clases/Prueba.php"; // Para usar el documento lo tenemos que añadir con require o include.
+require_once "./clases/Prueba2.php";
+
+use clases\Prueba; /* Además, si hemos definido un 'namespace' en el documento en cuestión, debemos importar dicho 'namespace' con 'use' o con la ruta completa en la
+instanciación, si no nos dirá que esa clase no está definida. Por convención el 'namespace' debe coincidir con el nombre de la ruta.
+*/
+
+use clases\Prueba as MiClase; // Con los alias, podemos también darle un nombre personalizado a nuestra importación y usarla con ese alias.
+
+use clases\{Prueba as PruebaRepetida, Prueba2}; // También podemos importar varios elementos simultáneamente si pertenecen al mismo namespace con los '{ }'.
 
 $prueba = new Prueba();
+$miClase = new MiClase();
+$pruebaRepetida = new PruebaRepetida();
+$prueba2 = new Prueba2();
 var_dump($prueba->getNombre()); // Como en PHP usamos '.' para concatenar, para llamar a las propiedades y métodos de las clases usamos '->'
+var_dump($miClase->getNombre());
+var_dump($pruebaRepetida->getNombre());
+var_dump($prueba2->getNombre());
 /*
 DETALLE IMPORTANTE EXTRAÍDO DEL TUTORIAL APLICABLE DE FORMA GENERAL
 Si en los métodos que retornan void (setters habitualmente o cualquier otro método con el que operemos asignando), en vez de retornar void
 retornásemos la propia instancia del objeto, esto nos permitiría encadenar operaciones en la asignación ya que estaríamos trabajando con la instanciación 
 actualizada constantemente, permitiéndonos el uso de "one liners" para retornar datos habiendo operado con ellos previamente.
 Por ejemplo, suponiendo que nuestro setter para el nombre de la clase Prueba fuera:
-public function setNombre(string $nombre): self|Prueba { // self|Prueba son el mismo tipo de dato, ya que $this es Prueba y self es un modificador que apunta a $this
+public function setNombre(string $nombre): self|Prueba { // self|Prueba son el mismo tipo de dato, ya que $this es una instancia de Prueba y self referencia a Prueba
     $this->nombre = $nombre;
     return $this;
 }
@@ -412,3 +431,25 @@ $nombre = (new Prueba())->setNombre("Julian")->getNombre();
 De tal forma que la primera asignación instanciaría la clase Prueba con las propiedades del constructor vacío, a su vez asignaríamos "Julián" como nombre y retornaríamos
 la propia instancia para después obtener sólo el nombre de esta y asignarlo así a la variable $nombre. Si retornásemos void en el setter no podríamos hacer esto.
 */
+
+/*
+COMPOSER 
+Para usar Composer como gestor de dependencias, necesitamos habilitar la extensión OpenSSL en nuestro php.ini. El php.ini de la versión PHP 7.2+ de Laragon 
+viene por defecto con esta extensión activada, pero al haber actualizado manualmente a PHP 8.0.8, tenemos que habilitar la extensión manualmente. Para ello:
+1. Acceder a "C:\laragon\bin\php\php-8.0.8-Win32-vs16-x64"
+2. Editar "php.ini"
+3. Ctrl+F "openssl"
+4. Descomentar "extension=openssl"
+Una vez realiados estos pasos, escribimos en nuestro shell (habiendo añadido el directorio de Laragon a nuestro Path de variables de entorno de sistema):
+> composer init
+> composer self-update
+> composer require <el_paquete_que_queramos>
+con 'init' nos generará un archivo composer.json vacío en el root, con el self-update se actualiza a la última versión estable y con el require, instalamos el paquete 
+y sus respectivas dependencias que se reflejarán en composer.json y composer.lock respectivamente.
+*/
+
+echo "<br/>";
+// En PHP se usa el 'double colon' para acceder a los elementos 'static' de una clase.
+echo Prueba2::APELLIDO . "<br/>"; // Una constante es 'static' por defecto, por eso podemos acceder.
+echo Prueba2::$segundoApellido . "<br/>"; // Esta variable está definida con el modificador 'static', por eso podemos acceder también. 
+echo $prueba2::APELLIDO . "<br/>"; // Si instanciamos una clase, también podemos usar el 'double colon'.

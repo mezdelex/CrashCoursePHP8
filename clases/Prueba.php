@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+namespace clases; /* el 'namespace' es la ruta virtual al documento. Por convención y estándar, se iguala a la ruta real, aunque podría no hacerse. 
+Se definen después de los declare y antes del resto de elementos */
+
 class Prueba {
     private string $nombre;
     private int $edad;
