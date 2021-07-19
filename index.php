@@ -453,3 +453,36 @@ echo "<br/>";
 echo Prueba2::APELLIDO . "<br/>"; // Una constante es 'static' por defecto, por eso podemos acceder.
 echo Prueba2::$segundoApellido . "<br/>"; // Esta variable está definida con el modificador 'static', por eso podemos acceder también. 
 echo $prueba2::APELLIDO . "<br/>"; // Si instanciamos una clase, también podemos usar el 'double colon'.
+
+require_once "./clases/Prueba3.php";
+
+use clases\Prueba3;
+
+var_dump((new Prueba3)->getNombre()); // Prueba3 hereda de Prueba todos los elementos public y protected. Más info en Prueba2 y Prueba3 sobre OOP.
+
+/*
+Clases abstractas
+No voy a hacer ejemplos para este apartado; igual que en Java. Para definir una clase o un método como abstracto, se usa como modificador 'abstract' al principio.
+Todo elemento abstracto ha de ser implementado para ser usado en la instancia.
+'x' extends 'y'
+*/
+
+/*
+Interfaces
+Una interface es una clase abstracta cuyos métodos son todos abstractos y las propiedades, en caso de haberlas, son todas constantes. Se usa el modificador 'interface'.
+Una interface ha de ser implementada siempre para usarse y una clase puede implementar VARIAS interfaces.
+Una interface puede EXTENDER ('extends') otras interfaces, ya que están al mismo nivel de abstracción, y así la clase sólo implementar una interface que ya contiene al resto.
+'x' implements 'y'
+*/
+
+/* 
+Polimorfismo
+Lo de siempre, vídeo 45
+*/
+
+/*
+Magic methods
+https://www.php.net/manual/en/language.oop5.magic.php
+Siempre empiezan por '__'
+Por ejemplo, __construct() es un magic method.
+*/

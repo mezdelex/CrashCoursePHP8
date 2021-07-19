@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace clases; /* el 'namespace' es la ruta virtual al documento. Por convención y estándar, se iguala a la ruta real, aunque podría no hacerse. 
 Se definen después de los declare y antes del resto de elementos */
 
-class Prueba2 {
+final class Prueba2 { // El modificador 'final' indica que la clase no puede ser extendida.
     private string $nombre;
     private int $edad;
     public const APELLIDO = "Conde";
@@ -38,11 +38,11 @@ class Prueba2 {
     //     return $this;
     // }
 
-    public function getEdad(): int {
+    final public function getEdad(): int { // El modificador 'final' indica que el método no puede ser sobreescrito.
         return $this->edad;
     }
 
-    public function setEdad(int $edad): void {
+    final public function setEdad(int $edad): void { // El modificador 'final' indica que el método no puede ser sobreescrito.
         $this->edad = $edad;
     }
 }

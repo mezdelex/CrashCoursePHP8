@@ -6,8 +6,8 @@ namespace clases; /* el 'namespace' es la ruta virtual al documento. Por convenc
 Se definen después de los declare y antes del resto de elementos */
 
 class Prueba {
-    private string $nombre;
-    private int $edad;
+    protected string $nombre;
+    protected int $edad;
 
     /* 
     En PHP el constructor vacío no inicializa las variables al valor neutro por defecto; tenemos que hacerlo nosotros. Al utilizar 'strict_types=1' y haber
