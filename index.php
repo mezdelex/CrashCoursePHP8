@@ -486,3 +486,92 @@ https://www.php.net/manual/en/language.oop5.magic.php
 Siempre empiezan por '__'
 Por ejemplo, __construct() es un magic method.
 */
+
+/*
+Late Static Binding
+class A { // Base Class
+    protected static $name = 'ClassA';
+    public static function getNameWithSelf() {
+        return self::$name;
+    }
+    public static function getNameWithStatic() {
+        return static::$name;
+    }
+}
+
+class B extends A {
+    protected static $name = 'ClassB';
+}
+
+echo B::getNameWithSelf(); // ClassA
+echo B::getNameWithStatic(); // ClassB
+*/
+
+/*
+Traits (Se deben usar con la lógica de los mixins; para evitar duplicar código)
+PHP no permite la herencia múltiple, pero existen formas de solventar esta carencia. Si la implementación de los distintos métodos de una clase padre a utilizar fuera distinta en cada hijo, podríamos usar interfaces ya que estas sí permiten múltiples implementaciones. Pero si lo que queremos es reutilizar métodos sin alterarlos, estaríamos repitiendo código. Para eso se pueden usar los 'Traits'. Los traits son un tipo de clase helper cuyos elementos podemos definir y reutilizar cuantas veces queramos en otras clases u otros traits. Para utilizarlos, además del require/include del documento y el use del namespace, tenemos que especificar el uso de dicho trait dentro de la clase o trait que lo contenga.
+*/
+
+require_once "./clases/PruebaTrait.php";
+
+use clases\PruebaTrait;
+
+echo "<br/>";
+echo (new PruebaTrait())->mostrarNombre() . "<br/>"; // Llamamos al método mostrarNombre() del Trait2 usado en PruebaTrait.
+echo (new PruebaTrait())->mostrarNombreTrait3() . "<br/>"; // Aquí llamamos al alias de mostrarNombre() definido en el use en PruebaTrait.
+
+/*
+IMPORTANTE: Si un trait tiene una propiedad 'static' y usamos ese trait en la clase A y asignamos un valor y luego usamos ese mismo trait en la clase B, el valor de la propiedad estática en B no séra el asignado en A como lo sería con una herencia normal con extends. 
+Las propiedades STATIC de los traits NO se comparten entre las clases que las usan.
+*/
+
+/*
+Clases anónimas
+$obj = new class implements/extends ... {
+    ... traits
+    
+    ... propiedades
+    
+    ... __construct(){}
+
+    ... métodos
+
+    ... etc
+}
+Se le da importancia a la instancia en lugar de a la clase. Al ser anónimas, su retorno o tipo de argumento en caso de requerirse en una función sería object o lo que implementen/hereden haciendo uso del polimorfismo ya que no tienen tipo propio.
+NO ME GUSTAN.
+*/
+
+/**
+ * Docblock (como Javadoc) https://docs.phpdoc.org/3.0/guide/guides/docblocks.html vídeo 51
+ * En PHP 8 es redundante ya que escribiendo buen código y tipos estrictos es más que suficiente
+ * 
+ * @param
+ * @return
+ * 
+ * @throws 
+ * 
+ * @var
+ * 
+ * @property
+ * @method
+ */
+
+ /*
+ Clonar (shadow copy)
+ Cuando queremos clonar un objeto o instancia pero no queremos que comparta referencia a posición de memoria con su clon, usamos 'clone'.
+ $obj1 = clone $obj2;
+ De tal forma que las propiedades de $obj1 no apuntan a las de $obj2.
+ Al realizar un clone no se llama al método '__construct()' de la clase ya que no hemos creado una nueva instancia sino que se llama a '__clone()' de tal forma que podemos especificar la lógica que queremos que se aplique al clonar mediante este método.
+ */
+
+ /* 
+ Serializar (deep copy)
+ Cuando queremos serializar un objeto para, por ejemplo, guardarlo en una base de datos, utilizamos el método serialize() y para lo opuesto unserialize().
+ También es una forma de crear un deep copy de un objeto ya que el objeto resultante de desserializar el string del objeto que hayamos serializado previamente, no apunta a la misma posición de memoria.
+ $str = serialize($obj1);
+ $obj2 = unserialize($str);
+ Igual que con clone, con (un)serialize existen los 'magic methods' a los que se llama cada vez que serializamos y desserializamos una instancia de una clase:
+ '__serialize()' y '__unserialize($data)'
+ En estos métodos podemos codificar, descodificar y/o aplicar la lógica que queramos.
+ */
