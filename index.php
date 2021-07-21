@@ -557,7 +557,7 @@ NO ME GUSTAN.
  * @method
  */
 
- /*
+/*
  Clonar (shadow copy)
  Cuando queremos clonar un objeto o instancia pero no queremos que comparta referencia a posición de memoria con su clon, usamos 'clone'.
  $obj1 = clone $obj2;
@@ -565,7 +565,7 @@ NO ME GUSTAN.
  Al realizar un clone no se llama al método '__construct()' de la clase ya que no hemos creado una nueva instancia sino que se llama a '__clone()' de tal forma que podemos especificar la lógica que queremos que se aplique al clonar mediante este método.
  */
 
- /* 
+/* 
  Serializar (deep copy)
  Cuando queremos serializar un objeto para, por ejemplo, guardarlo en una base de datos, utilizamos el método serialize() y para lo opuesto unserialize().
  También es una forma de crear un deep copy de un objeto ya que el objeto resultante de desserializar el string del objeto que hayamos serializado previamente, no apunta a la misma posición de memoria.
@@ -575,3 +575,40 @@ NO ME GUSTAN.
  '__serialize()' y '__unserialize($data)'
  En estos métodos podemos codificar, descodificar y/o aplicar la lógica que queramos.
  */
+
+/*
+ Excepciones
+ En PHP hay dos ramas principales para las excepciones que implementan la interfaz Throwable: Error y Exception.
+ Antes de PHP 7 no existía la interfaz Throwable y los errores de Error eran irrecuperables. Desde PHP 7, existe la posibilidad de capturar dichos errores gracias a la implementación de Throwable, de ahí la división a priori absurda. 
+ NO podemos implementar la interfaz Throwable para nuestras excepciones personalizadas, con lo cual siempre tenemos que heredar de Exception que ya la implementa.
+ Igualmente, si quisiéramos contemplar TODOS los errores en un catch, haciendo uso del polimorfismo definiríamos el tipo de la excepción como Throwable para asegurarnos.
+ Para lanzar excepciones personalizadas:
+ throw new <excepción>("Mensaje opcional");
+ */
+require_once "./excepciones/PruebaExcepcion.php";
+
+use excepciones\MiExcepcion;
+
+function sumarPositivos(int $a, int $b): int {
+    return ($a < 0 | $b < 0) ? throw new MiExcepcion() : $a + $b;
+}
+
+// Podríamos definir un 'catch' GLOBAL para capturar nuestra excepción y definir el comportamiento con un callback.
+set_exception_handler(function (MiExcepcion|\Exception|\Throwable $e): void { // Ejemplo de polimorfismo de menos a más, con cualquiera de las tres valdría.
+    echo $e->getMessage() . " " . $e->getFile() . " en línea: " . $e->getLine() . "<br/>";
+});
+
+// O hacerlo mediante el uso del bloque catch. Si no ponemos el bloque catch pero tenemos el set_exception_handler, la captura igual.
+$resultado = 0;
+try {
+    $GLOBALS["resultado"] = sumarPositivos(-3, 2);
+} catch (MiExcepcion | \Exception | \Throwable $e) {
+    echo $e->getMessage() . " " . $e->getFile() . " en línea: " . $e->getLine() . "<br/>";
+} finally { // El bloque finally se ejecuta siempre, haya excepción o no. Si esto estuviera dentro de una función y tanto el bloque try como el finally tuvieran un return, prevalece el return de finally ya que es el último que se ejecuta.
+    echo $GLOBALS["resultado"] . "<br />";
+}
+
+/*
+Trabajar con fechas en PHP (Vídeo 55)
+Librería recomendada: Carbon (varios frameworks la usan por defecto).
+*/
