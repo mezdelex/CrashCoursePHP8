@@ -612,3 +612,52 @@ try {
 Trabajar con fechas en PHP (Vídeo 55)
 Librería recomendada: Carbon (varios frameworks la usan por defecto).
 */
+
+/*
+Iterators
+En PHP podemos iterar sobre las propiedades primitivas de una clase y también sobre las propiedades de un array de objetos definido a su vez como propiedad de otra.
+Esta clase que contiene un array de objetos actúa como un wrapper, implementando los métodos de Iterator para definir cómo recorrer dicho array.
+Para ello debemos implementar la interface Iterator y definir los métodos implementados.
+Ejemplo con Moneda y MonedasCollection.
+*/
+require_once "./clases/MonedasCollection.php";
+require_once "./clases/Moneda.php";
+
+use clases\{MonedasCollection, Moneda};
+
+$monedasCollection = new MonedasCollection([new Moneda("Euro", 1), new Moneda("Dolar", 1), new Moneda("Euro", 2)]);
+
+foreach ($monedasCollection as $moneda) {
+    echo "Tienes una moneda de " . $moneda->getValor() . " " . strtolower($moneda->getTipo()) . "/" . strtolower($moneda->getTipo()) . "(e)s.<br/>";
+}
+/* 
+En este caso no tiene mucho sentido el ejemplo al haber usado una clase a modo de wrapper para recorrer el array de la misma forma que lo haríamos con un array primitivo, pero al tener que implementar los métodos de la interfaz Iterator con la lógica que queramos, podemos incluir nuestra lógica en los wrappers y no en la manipulación que hubiéramos hecho con el array en cuestión en la llamada. 
+Si nos fijamos en el array del wrapper, realmente no va asociado a ningún tipo de dato, lo hemos "asociado" nosotros con la semántica del nombre, con lo cual podríamos definir varios wrappers distintos para recorrer cada array de una forma u otra respectivamente y no repetir la lógica.
+*/
+require_once "./clases/MonedasCollection2.php";
+
+use clases\MonedasCollection2; // Con IteratorAggregate
+
+$monedasCollection2 = new MonedasCollection2([new Moneda("Euro", 1), new Moneda("Dolar", 1), new Moneda("Euro", 2)]);
+
+foreach ($monedasCollection as $moneda) {
+    echo "Tienes una moneda de " . $moneda->getValor() . " " . strtolower($moneda->getTipo()) . "/" . strtolower($moneda->getTipo()) . "(e)s.<br/>";
+}
+/*
+Igualmente, con la intefaz IteratorAggregate podemos implementar los métodos de Iterator de forma predefinida en función del tipo de iterator que utilicemos con getIterator(). Hay varios ya preconfigurados que podemos ver aquí: https://www.php.net/manual/en/spl.iterators.php
+
+Para pasar como argumento a una función una colección que haya implementado cualquier Iterator, podemos usar el tipo "iterable" a partir de PHP 7+.
+
+function <nombreFunción>(iterable $<miColección>) {
+    ...
+}
+*/
+
+/*
+Superglobals
+Las superglobals son variables reservadas de PHP accesibles desde cualquier scope.
+https://www.php.net/manual/en/reserved.variables.php
+*/
+echo "<pre>";
+print_r($_SERVER);
+echo "</pre>";
